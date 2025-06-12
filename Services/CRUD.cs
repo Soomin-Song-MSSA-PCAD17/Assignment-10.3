@@ -23,6 +23,9 @@ namespace Assignment_10._3.Services
         {
             var car = FindCar(updatedCar.Vin);
             if (car == null) { return; }
+            car.Make = updatedCar.Make;
+            car.Model = updatedCar.Model;
+            car.Year = updatedCar.Year;
             car.Price = updatedCar.Price;
             Records.context.SaveChanges();
         }

@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace Assignment_10._3
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Event handlers for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -37,7 +37,15 @@ namespace Assignment_10._3
 
         private void btnCreate_Click(object sender, RoutedEventArgs e)
         {
-            crud.CreateCar(GetTextboxData());
+            var newCar = GetTextboxData();
+            if (newCar == null) { return; }
+            if (crud.FindCar(newCar.Vin) != null)
+            {
+                MessageBox.Show($"Item could not be created. Car with VIN '{newCar.Vin}' is already in the database.","caption",MessageBoxButton.OK,MessageBoxImage.Error);
+                return;
+            }
+            
+            crud.CreateCar(newCar);
             RefreshDataGridView();
         }
 
@@ -51,6 +59,7 @@ namespace Assignment_10._3
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
+            if (GetSelectedRow() == null) { return; }
             crud.DeleteCar(GetSelectedRow().Vin);
             RefreshDataGridView();
         }
@@ -63,6 +72,7 @@ namespace Assignment_10._3
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             FillTextbox(null);
+            Console.WriteLine("btnClear pressed");
         }
 
 
@@ -76,12 +86,16 @@ namespace Assignment_10._3
     {
         private Car GetTextboxData()
         {
+            if (TextboxVIN.Text == string.Empty || TextboxMake.Text == string.Empty || TextboxModel.Text == string.Empty || TextboxYear.Text == string.Empty || TextboxPrice.Text == string.Empty)
+            {
+                return null;
+            }
             string vin = TextboxVIN.Text;
             string make = TextboxMake.Text;
             string model = TextboxModel.Text;
             string year = TextboxYear.Text;
             double price = Convert.ToDouble(TextboxPrice.Text);
-            return new Models.Car(vin, make, model, year, price);
+            return new Car(vin, make, model, year, price);
         }
         
         private void FillTextbox(Car car)
